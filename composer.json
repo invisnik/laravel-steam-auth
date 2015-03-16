@@ -17,5 +17,6 @@
         "psr-4": {
             "Invisnik\\LaravelSteamAuth\\": "src"
         }
-    }
+    },
+    "minimum-stability": "dev"
 }
