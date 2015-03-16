@@ -1,0 +1,21 @@
+{
+    "name": "invisnik/laravel-steam-auth",
+    "description": "Laravel Steam Auth",
+    "keywords": ["steam", "laravel", "auth"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nikita Brytkov",
+            "email": "invis.nik@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/support": "5.0.x"
+    },
+    "autoload": {
+        "psr-4": {
+            "Invisnik\\LaravelSteamAuth\\": "src"
+        }
+    }
+}
