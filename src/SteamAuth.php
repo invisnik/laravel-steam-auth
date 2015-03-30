@@ -19,11 +19,16 @@ class SteamAuth implements SteamAuthInterface {
      */
     public $redirect_url;
 
+    /**
+     * @var string
+     */
+    const OPENID_URL = 'https://steamcommunity.com/openid';
+
     public function __construct()
     {
-        $this->redirect_url = \Config::get('steam-auth.redirect_url') ? \Config::get('steam-auth.redirect_url') :  $_SERVER['SERVER_NAME'];
+        $this->redirect_url = \Config::get('steam-auth.redirect_url') ? \Config::get('steam-auth.redirect_url') :  url('/');
         $this->OpenID = new LightOpenID($this->redirect_url);
-        $this->OpenID->identity = 'https://steamcommunity.com/openid';
+        $this->OpenID->identity = self::OPENID_URL;
         $this->init();
     }
 
@@ -32,22 +37,20 @@ class SteamAuth implements SteamAuthInterface {
      */
     private function init()
     {
-        if($this->OpenID->mode == 'cancel'){
-
+        if($this->OpenID->mode == 'cancel')
+        {
             $this->SteamID = false;
-
-        }else if($this->OpenID->mode){
-
-            if($this->OpenID->validate()){
-
+        }
+        else if($this->OpenID->mode)
+        {
+            if($this->OpenID->validate())
+            {
                 $this->SteamID = basename($this->OpenID->identity);
-
-            }else{
-
-				$this->SteamID = false;
-
             }
-
+            else
+            {
+				$this->SteamID = false;
+            }
         }
     }
 
