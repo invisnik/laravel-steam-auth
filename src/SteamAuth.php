@@ -26,8 +26,8 @@ class SteamAuth implements SteamAuthInterface {
 
     public function __construct()
     {
-        $this->redirect_url = \Config::get('steam-auth.redirect_url') ? \Config::get('steam-auth.redirect_url') :  url('/');
-        $this->OpenID = new LightOpenID($this->redirect_url);
+        $this->OpenID = new LightOpenID($_SERVER['SERVER_NAME']);
+        $this->OpenID->returnUrl = \Config::get('steam-auth.redirect_url');
         $this->OpenID->identity = self::OPENID_URL;
         $this->init();
     }
