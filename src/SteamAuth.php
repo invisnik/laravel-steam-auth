@@ -1,10 +1,11 @@
 <?php namespace Invisnik\LaravelSteamAuth;
 
+use Exception;
 
 class SteamAuth implements SteamAuthInterface {
 
     /**
-     * @var string|null
+     * @var integer|null
      */
     public $steam_id = null;
 
@@ -101,7 +102,7 @@ class SteamAuth implements SteamAuthInterface {
             }
         }
         else {
-            $return = (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['SCRIPT_NAME'];
+            $return = url('/');
         }
         $params = array(
             'openid.ns' => 'http://specs.openid.net/auth/2.0',
