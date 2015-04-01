@@ -1,6 +1,7 @@
 <?php namespace Invisnik\LaravelSteamAuth;
 
 use Exception;
+use Illuminate\Http\Request;
 
 class SteamAuth implements SteamAuthInterface {
 
@@ -15,13 +16,19 @@ class SteamAuth implements SteamAuthInterface {
     public $auth_url;
 
     /**
+     * @var Request
+     */
+    private $request;
+    
+    /**
      * @var string
      */
     const OPENID_URL = 'https://steamcommunity.com/openid/login';
 
-    public function __construct()
+    public function __construct(Request $request)
     {
-        $this->auth_url = $this->buildUrl(\Config::get('steam-auth.redirect_url'));
+        $this->request = $request;
+        $this->auth_url = $this->buildUrl(url(\Config::get('steam-auth.redirect_url')));
     }
 
     /**
@@ -31,17 +38,18 @@ class SteamAuth implements SteamAuthInterface {
      */
     public function validate()
     {
-        if(isset($_GET['openid_assoc_handle']) && isset($_GET['openid_signed']) && isset($_GET['openid_sig'])) {
+        if($this->request->has('openid_assoc_handle') && $this->request->has('openid_signed') && $this->request->has('openid_sig')) {
+            $get = $this->request->all();
             try {
                 $params = array(
-                    'openid.assoc_handle' => $_GET['openid_assoc_handle'],
-                    'openid.signed' => $_GET['openid_signed'],
-                    'openid.sig' => $_GET['openid_sig'],
+                    'openid.assoc_handle' => $get['openid_assoc_handle'],
+                    'openid.signed' => $get['openid_signed'],
+                    'openid.sig' => $get['openid_sig'],
                     'openid.ns' => 'http://specs.openid.net/auth/2.0',
                 );
-                $signed = explode(',', $_GET['openid_signed']);
+                $signed = explode(',', $get['openid_signed']);
                 foreach ($signed as $item) {
-                    $val = $_GET['openid_' . str_replace('.', '_', $item)];
+                    $val = $get['openid_' . str_replace('.', '_', $item)];
                     $params['openid.' . $item] = get_magic_quotes_gpc() ? stripslashes($val) : $val;
                 }
                 $params['openid.mode'] = 'check_authentication';
@@ -57,7 +65,7 @@ class SteamAuth implements SteamAuthInterface {
                     ),
                 ));
                 $result = file_get_contents(self::OPENID_URL, false, $context);
-                preg_match("#^http://steamcommunity.com/openid/id/([0-9]{17,25})#", $_GET['openid_claimed_id'], $matches);
+                preg_match("#^http://steamcommunity.com/openid/id/([0-9]{17,25})#", $get['openid_claimed_id'], $matches);
                 $this->steam_id = is_numeric($matches[1]) ? $matches[1] : 0;
                 $response = preg_match("#is_valid\s*:\s*true#i", $result) == 1 ? true : false;
             } catch (Exception $e) {
@@ -108,7 +116,7 @@ class SteamAuth implements SteamAuthInterface {
             'openid.ns' => 'http://specs.openid.net/auth/2.0',
             'openid.mode' => 'checkid_setup',
             'openid.return_to' => $return,
-            'openid.realm' => (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'],
+            'openid.realm' => (!empty($this->request->server('HTTPS')) ? 'https' : 'http') . '://' . $this->request->server('HTTP_HOST'),
             'openid.identity' => 'http://specs.openid.net/auth/2.0/identifier_select',
             'openid.claimed_id' => 'http://specs.openid.net/auth/2.0/identifier_select',
         );

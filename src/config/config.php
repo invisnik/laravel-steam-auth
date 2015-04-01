@@ -5,6 +5,6 @@ return [
     /*
      * Redirect url after login
      */
-    'redirect_url' => url('/')
+    'redirect_url' => '/'
 
 ];
