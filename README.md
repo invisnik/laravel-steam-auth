@@ -1,6 +1,6 @@
 # Steam authentication for laravel 5
 [![Latest Stable Version](https://poser.pugx.org/invisnik/laravel-steam-auth/v/stable.svg)](https://packagist.org/packages/invisnik/laravel-steam-auth) 
-[![Total Downloads](https://poser.pugx.org/invisnik/laravel-steam-auth/downloads.svg)](https://packagist.org/packages/invisnik/laravel-steam-auth) 
+[![Total Downloads](https://poser.pugx.org/invisnik/laravel-steam-auth/downloads)](https://packagist.org/packages/invisnik/laravel-steam-auth)
 [![License](https://poser.pugx.org/invisnik/laravel-steam-auth/license.svg)](https://packagist.org/packages/invisnik/laravel-steam-auth)
 
 This package is a Laravel 5 service provider which provides Steam OpenID and is very easy to integrate with any project which requires steam authentication.
