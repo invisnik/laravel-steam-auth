@@ -112,11 +112,12 @@ class SteamAuth implements SteamAuthInterface {
         else {
             $return = url('/');
         }
+        $https = $this->request->server('HTTPS');
         $params = array(
             'openid.ns' => 'http://specs.openid.net/auth/2.0',
             'openid.mode' => 'checkid_setup',
             'openid.return_to' => $return,
-            'openid.realm' => (!empty($this->request->server('HTTPS')) ? 'https' : 'http') . '://' . $this->request->server('HTTP_HOST'),
+            'openid.realm' => (!empty($https) ? 'https' : 'http') . '://' . $this->request->server('HTTP_HOST'),
             'openid.identity' => 'http://specs.openid.net/auth/2.0/identifier_select',
             'openid.claimed_id' => 'http://specs.openid.net/auth/2.0/identifier_select',
         );
