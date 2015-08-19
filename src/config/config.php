@@ -5,6 +5,8 @@ return [
     /*
      * Redirect url after login
      */
-    'redirect_url' => '/'
+    'redirect_url' => '/',
+
+    'api_key' => 'Api Key'
 
 ];

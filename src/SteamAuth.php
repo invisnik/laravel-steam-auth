@@ -8,12 +8,17 @@ class SteamAuth implements SteamAuthInterface {
     /**
      * @var integer|null
      */
-    public $steam_id = null;
+    public $steamId = null;
+
+    /**
+     * @var array|null
+     */
+    public $steamInfo = null;
 
     /**
      * @var string
      */
-    public $auth_url;
+    public $authUrl;
 
     /**
      * @var Request
@@ -25,10 +30,15 @@ class SteamAuth implements SteamAuthInterface {
      */
     const OPENID_URL = 'https://steamcommunity.com/openid/login';
 
+    /**
+     * @var string
+     */
+    const STEAM_INFO_URL = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=%s&steamids=%s';
+
     public function __construct(Request $request)
     {
         $this->request = $request;
-        $this->auth_url = $this->buildUrl(url(\Config::get('steam-auth.redirect_url')));
+        $this->authUrl = $this->buildUrl(url(\Config::get('steam-auth.redirect_url')));
     }
 
     /**
@@ -66,7 +76,8 @@ class SteamAuth implements SteamAuthInterface {
                 ));
                 $result = file_get_contents(self::OPENID_URL, false, $context);
                 preg_match("#^http://steamcommunity.com/openid/id/([0-9]{17,25})#", $get['openid_claimed_id'], $matches);
-                $this->steam_id = is_numeric($matches[1]) ? $matches[1] : 0;
+                $this->steamId = is_numeric($matches[1]) ? $matches[1] : 0;
+                $this->parseInfo();
                 $response = preg_match("#is_valid\s*:\s*true#i", $result) == 1 ? true : false;
             } catch (Exception $e) {
                 $response = false;
@@ -135,13 +146,35 @@ class SteamAuth implements SteamAuthInterface {
     }
 
     /**
+     * Get user data from steam api
+     *
+     * @return void
+     */
+    public function parseInfo() {
+        if(!is_null($this->steamId)) {
+            $json = file_get_contents(sprintf(self::STEAM_INFO_URL, \Config::get('steam-auth.api_key'), $this->steamId));
+            $json = json_decode($json, TRUE);
+            $this->steamInfo = new SteamInfo($json["response"]["players"][0]);
+        }
+    }
+
+    /**
      * Returns the login url
      *
      * @return string
      */
     public function getAuthUrl()
     {
-        return $this->auth_url;
+        return $this->authUrl;
+    }
+
+    /**
+     * Returns the SteamUser info
+     *
+     * @return SteamInfo
+     */
+    public function getUserInfo(){
+        return $this->steamInfo;
     }
 
     /**
@@ -150,7 +183,7 @@ class SteamAuth implements SteamAuthInterface {
      * @return bool|string
      */
     public function getSteamId(){
-        return $this->steam_id;
+        return $this->steamId;
     }
 
 }
