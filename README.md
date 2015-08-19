@@ -9,7 +9,7 @@ This package is a Laravel 5 service provider which provides Steam OpenID and is 
 Add this to your composer.json file, in the require object:
 
 ```javascript
-"invisnik/laravel-steam-auth": "1.1.*"
+"invisnik/laravel-steam-auth": "2.*"
 ```
 
 After that, run composer install to install the package.
@@ -17,21 +17,14 @@ After that, run composer install to install the package.
 Add the service provider to `app/config/app.php`, within the `providers` array.
 
 ```php
-'providers' => array(
+'providers' => [
 	// ...
-	'Invisnik\LaravelSteamAuth\SteamServiceProvider',
-)
+	Invisnik\LaravelSteamAuth\SteamServiceProvider::class,
+]
 ```
-
-```php
-'aliases' => array(
-	// ...
-	'SteamAuth' => 'Invisnik\LaravelSteamAuth\Facades\SteamAuth',
-)
-```
-You how have access to the `SteamAuth` facade.
 
 Lastly, publish the config file.
+
 ```
 php artisan vendor:publish
 ```
@@ -51,14 +44,22 @@ class SteamController extends Controller {
         $this->steam = $steam;
     }
 
-	public function getLogin()
-	{
-
-        if( $this->steam->validate()){
-            return  $this->steam->getSteamId();  //returns the user steamid
+    public function getLogin()
+    {
+        if($this->steam->validate()){
+            $info = $this->steam->getUserInfo();
+            if(!is_null($info)) {
+            //For example
+                User::create([
+                    'username' => $info->getNick(),
+                    'avatar' => $info->getProfilePictureFull(),
+                    'steamid' => $info->getSteamID(),
+                    //...
+                ]);
+            }
         }else{
             return  $this->steam->redirect(); //redirect to steam login page
         }
-	}
+    }
 }
 ```
