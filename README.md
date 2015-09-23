@@ -46,7 +46,7 @@ class SteamController extends Controller {
 
     public function getLogin()
     {
-        if($this->steam->validate()){
+        if($this->steam->validate()){ // In the config 'redirect_url' must been controller route where checks $steam->validate();
             $info = $this->steam->getUserInfo();
             if(!is_null($info)) {
             //For example
