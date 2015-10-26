@@ -81,7 +81,7 @@ class AuthController extends Controller
                     return redirect('/'); //redirect to site
                 }else{
                     $user = User::create([
-                        'useranme' => $info->getNick(),
+                        'username' => $info->getNick(),
                         'avatar'   => $info->getProfilePictureFull(),
                         'steamid' => $info->getSteamID64()
                     ]);
