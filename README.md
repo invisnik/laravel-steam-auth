@@ -28,11 +28,37 @@ Lastly, publish the config file.
 ```
 php artisan vendor:publish
 ```
-## Usage
+## Usage example
+In `config/steam-auth.php`
 ```php
-use Invisnik\LaravelSteamAuth\SteamAuth;
+return [
 
-class SteamController extends Controller {
+    /*
+     * Redirect url after login
+     */
+    'redirect_url' => '/login',
+    /*
+     *  Api Key (http://steamcommunity.com/dev/apikey)
+     */
+    'api_key' => 'Your Api Key'
+
+];
+
+```
+In `routes.php`
+```php
+get('login', 'AuthController@login');
+```
+In `AuthController`
+```php
+namespace App\Http\Controllers;
+
+use Invisnik\LaravelSteamAuth\SteamAuth;
+use App\User;
+use Auth;
+
+class AuthController extends Controller
+{
 
     /**
      * @var SteamAuth
@@ -44,22 +70,30 @@ class SteamController extends Controller {
         $this->steam = $steam;
     }
 
-    public function getLogin()
+    public function login()
     {
-        if($this->steam->validate()){ // In the config 'redirect_url' must been controller route where checks $steam->validate();
+        if($this->steam->validate()){ 
             $info = $this->steam->getUserInfo();
             if(!is_null($info)) {
-            //For example
-                User::create([
-                    'username' => $info->getNick(),
-                    'avatar' => $info->getProfilePictureFull(),
-                    'steamid' => $info->getSteamID(),
-                    //...
-                ]);
+                $user = User::where('steamid', $info->getSteamID64())->first();
+                if(!is_null($user)){
+                    Auth::login($user, true);
+                    return redirect('/'); //redirect to site
+                }else{
+                    $user = User::create([
+                        'useranme' => $info->getNick(),
+                        'avatar'   => $info->getProfilePictureFull(),
+                        'steamid' => $info->getSteamID64()
+                    ]);
+                    Auth::login($user, true);
+                    return redirect('/'); //redirect to site
+                }
             }
         }else{
             return  $this->steam->redirect(); //redirect to steam login page
         }
     }
+
 }
+
 ```
