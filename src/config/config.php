@@ -3,12 +3,12 @@
 return [
 
     /*
-     * Redirect url after login
+     * Redirect URL after login
      */
     'redirect_url' => '/',
     /*
-     *  Api Key (http://steamcommunity.com/dev/apikey)
+     *  API Key (http://steamcommunity.com/dev/apikey)
      */
-    'api_key' => 'Api_Key'
+    'api_key' => 'API_Key'
 
 ];
