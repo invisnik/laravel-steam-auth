@@ -3,16 +3,16 @@
 [![Total Downloads](https://poser.pugx.org/invisnik/laravel-steam-auth/downloads)](https://packagist.org/packages/invisnik/laravel-steam-auth)
 [![License](https://poser.pugx.org/invisnik/laravel-steam-auth/license.svg)](https://packagist.org/packages/invisnik/laravel-steam-auth)
 
-This package is a Laravel 5 service provider which provides Steam OpenID and is very easy to integrate with any project which requires steam authentication.
+This package is a Laravel 5 service provider which provides support for Steam OpenID and is very easy to integrate with any project that requires Steam authentication.
 
 ## Installation Via Composer
-Add this to your composer.json file, in the require object:
+Add this to your `composer.json` file, in the require object:
 
 ```javascript
 "invisnik/laravel-steam-auth": "2.*"
 ```
 
-After that, run composer install to install the package.
+After that, run `composer install` to install the package.
 
 Add the service provider to `app/config/app.php`, within the `providers` array.
 
@@ -34,13 +34,13 @@ In `config/steam-auth.php`
 return [
 
     /*
-     * Redirect url after login
+     * Redirect URL after login
      */
     'redirect_url' => '/login',
     /*
-     *  Api Key (http://steamcommunity.com/dev/apikey)
+     *  API Key (http://steamcommunity.com/dev/apikey)
      */
-    'api_key' => 'Your Api Key'
+    'api_key' => 'Your API Key'
 
 ];
 
@@ -72,25 +72,25 @@ class AuthController extends Controller
 
     public function login()
     {
-        if($this->steam->validate()){ 
+        if ($this->steam->validate()) { 
             $info = $this->steam->getUserInfo();
-            if(!is_null($info)) {
+            if (! is_null($info)) {
                 $user = User::where('steamid', $info->getSteamID64())->first();
-                if(!is_null($user)){
+                if (! is_null($user)) {
                     Auth::login($user, true);
-                    return redirect('/'); //redirect to site
+                    return redirect('/'); // redirect to site
                 }else{
                     $user = User::create([
                         'username' => $info->getNick(),
                         'avatar'   => $info->getProfilePictureFull(),
-                        'steamid' => $info->getSteamID64()
+                        'steamid'  => $info->getSteamID64()
                     ]);
                     Auth::login($user, true);
-                    return redirect('/'); //redirect to site
+                    return redirect('/'); // redirect to site
                 }
             }
-        }else{
-            return  $this->steam->redirect(); //redirect to steam login page
+        } else {
+            return $this->steam->redirect(); // redirect to Steam login page
         }
     }
 
