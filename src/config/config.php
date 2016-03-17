@@ -3,12 +3,17 @@
 return [
 
     /*
-     * Redirect URL after login
+     * Redirect url after login
      */
     'redirect_url' => '/',
     /*
-     *  API Key (http://steamcommunity.com/dev/apikey)
+     *  Api Key (http://steamcommunity.com/dev/apikey)
      */
-    'api_key' => 'API_Key'
+    'api_key' => 'Api_Key',
+
+    /*
+     *  Is using https ?
+     */
+    'https' => false
 
 ];
