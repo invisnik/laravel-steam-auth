@@ -11,7 +11,7 @@ class SteamAuth implements SteamAuthInterface {
     public $steamId = null;
 
     /**
-     * @var array|null
+     * @var SteamInfo
      */
     public $steamInfo = null;
 
