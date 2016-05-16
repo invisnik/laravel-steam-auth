@@ -7,8 +7,12 @@ return [
      */
     'redirect_url' => '/',
     /*
-     *  API Key (http://steamcommunity.com/dev/apikey)
+     * API Key (http://steamcommunity.com/dev/apikey)
      */
-    'api_key' => 'API_Key'
+    'api_key' => 'API_Key',
+    /*
+     * Is using https ?
+     */
+    'https' => false
 
 ];
