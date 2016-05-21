@@ -38,7 +38,7 @@ class SteamAuth implements SteamAuthInterface {
     public function __construct(Request $request)
     {
         $this->request = $request;
-        $this->authUrl = $this->buildUrl(url(\Config::get('steam-auth.redirect_url')));
+        $this->authUrl = $this->buildUrl(url(\Config::get('steam-auth.redirect_url'), [], \Config::get('steam-auth.https')));
     }
 
     /**
@@ -121,14 +121,14 @@ class SteamAuth implements SteamAuthInterface {
             }
         }
         else {
-            $return = url('/');
+            $return = url('/', [], \Config::get('steam-auth.https'));
         }
-        $https = $this->request->server('HTTPS');
+
         $params = array(
             'openid.ns' => 'http://specs.openid.net/auth/2.0',
             'openid.mode' => 'checkid_setup',
             'openid.return_to' => $return,
-            'openid.realm' => \Config::get('https') ? 'https' : 'http' . '://' . $this->request->server('HTTP_HOST'),
+            'openid.realm' => \Config::get('steam-auth.https') ? 'https' : 'http' . '://' . $this->request->server('HTTP_HOST'),
             'openid.identity' => 'http://specs.openid.net/auth/2.0/identifier_select',
             'openid.claimed_id' => 'http://specs.openid.net/auth/2.0/identifier_select',
         );

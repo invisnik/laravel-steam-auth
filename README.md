@@ -40,8 +40,11 @@ return [
     /*
      *  API Key (http://steamcommunity.com/dev/apikey)
      */
-    'api_key' => 'Your API Key'
-
+    'api_key' => 'Your API Key',
+    /*
+     * Is using https?
+     */
+    'https' => false
 ];
 
 ```
