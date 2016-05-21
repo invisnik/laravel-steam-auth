@@ -121,7 +121,7 @@ class SteamAuth implements SteamAuthInterface {
             }
         }
         else {
-            $return = url('/', [], false);
+            $return = url('/', [], \Config::get('steam-auth.https'));
         }
 
         $params = array(
