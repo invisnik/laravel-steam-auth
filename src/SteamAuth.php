@@ -1,5 +1,6 @@
 <?php namespace Invisnik\LaravelSteamAuth;
 
+use Illuminate\Support\Facades\Config;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -38,7 +39,7 @@ class SteamAuth implements SteamAuthInterface {
     public function __construct(Request $request)
     {
         $this->request = $request;
-        $this->authUrl = $this->buildUrl(url(\Config::get('steam-auth.redirect_url'), [], \Config::get('steam-auth.https')));
+        $this->authUrl = $this->buildUrl(url(Config::get('steam-auth.redirect_url'), [], Config::get('steam-auth.https')));
     }
 
     /**
@@ -121,14 +122,14 @@ class SteamAuth implements SteamAuthInterface {
             }
         }
         else {
-            $return = url('/', [], \Config::get('steam-auth.https'));
+            $return = url('/', [], Config::get('steam-auth.https'));
         }
 
         $params = array(
             'openid.ns' => 'http://specs.openid.net/auth/2.0',
             'openid.mode' => 'checkid_setup',
             'openid.return_to' => $return,
-            'openid.realm' => \Config::get('steam-auth.https') ? 'https' : 'http' . '://' . $this->request->server('HTTP_HOST'),
+            'openid.realm' => Config::get('steam-auth.https') ? 'https' : 'http' . '://' . $this->request->server('HTTP_HOST'),
             'openid.identity' => 'http://specs.openid.net/auth/2.0/identifier_select',
             'openid.claimed_id' => 'http://specs.openid.net/auth/2.0/identifier_select',
         );
@@ -152,7 +153,7 @@ class SteamAuth implements SteamAuthInterface {
      */
     public function parseInfo() {
         if(!is_null($this->steamId)) {
-            $json = file_get_contents(sprintf(self::STEAM_INFO_URL, \Config::get('steam-auth.api_key'), $this->steamId));
+            $json = file_get_contents(sprintf(self::STEAM_INFO_URL, Config::get('steam-auth.api_key'), $this->steamId));
             $json = json_decode($json, TRUE);
             $this->steamInfo = new SteamInfo($json["response"]["players"][0]);
         }
