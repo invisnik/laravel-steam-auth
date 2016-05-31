@@ -115,13 +115,11 @@ class SteamAuth implements SteamAuthInterface {
      */
     private function buildUrl($return = null)
     {
-        if (!is_null($return)) {
-            if (!$this->validateUrl($return)) {
-                throw new Exception('The return URL must be a valid URL with a URI Scheme or http or https.');
-            }
-        }
-        else {
+        if(is_null($return)) {
             $return = url('/', [], \Config::get('steam-auth.https'));
+        }
+        if (!is_null($return) && !$this->validateUrl($return)) {
+            throw new Exception('The return URL must be a valid URL with a URI Scheme or http or https.');
         }
 
         $params = array(
