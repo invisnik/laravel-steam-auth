@@ -87,10 +87,8 @@ class SteamAuth implements SteamAuthInterface {
             }
             return $response;
         }
-        else
-        {
-            return false;
-        }
+        
+        return false;
     }
 
     /**
