@@ -62,7 +62,6 @@ use Auth;
 
 class AuthController extends Controller
 {
-
     /**
      * @var SteamAuth
      */
@@ -75,28 +74,23 @@ class AuthController extends Controller
 
     public function login()
     {
-        if ($this->steam->validate()) { 
+        if ($this->steam->validate()) {
             $info = $this->steam->getUserInfo();
-            if (! is_null($info)) {
+            if (!is_null($info)) {
                 $user = User::where('steamid', $info->getSteamID64())->first();
-                if (! is_null($user)) {
-                    Auth::login($user, true);
-                    return redirect('/'); // redirect to site
-                }else{
+                if (is_null($user)) {
                     $user = User::create([
                         'username' => $info->getNick(),
                         'avatar'   => $info->getProfilePictureFull(),
                         'steamid'  => $info->getSteamID64()
                     ]);
-                    Auth::login($user, true);
-                    return redirect('/'); // redirect to site
                 }
+            	Auth::login($user, true);
+            	return redirect('/'); // redirect to site
             }
-        } else {
-            return $this->steam->redirect(); // redirect to Steam login page
         }
+        return $this->steam->redirect(); // redirect to Steam login page
     }
-
 }
 
 ```
