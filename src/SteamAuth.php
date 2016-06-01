@@ -48,15 +48,15 @@ class SteamAuth implements SteamAuthInterface {
      */
     public function validate()
     {
-        if($this->request->has('openid_assoc_handle') && $this->request->has('openid_signed') && $this->request->has('openid_sig')) {
-            $get = $this->request->all();
-            try {
-                $params = array(
+        try {
+            if($this->request->has('openid_assoc_handle') && $this->request->has('openid_signed') && $this->request->has('openid_sig')) {
+                $get = $this->request->all();
+                $params = [
                     'openid.assoc_handle' => $get['openid_assoc_handle'],
                     'openid.signed' => $get['openid_signed'],
                     'openid.sig' => $get['openid_sig'],
                     'openid.ns' => 'http://specs.openid.net/auth/2.0',
-                );
+                ];
                 $signed = explode(',', $get['openid_signed']);
                 foreach ($signed as $item) {
                     $val = $get['openid_' . str_replace('.', '_', $item)];
@@ -78,19 +78,13 @@ class SteamAuth implements SteamAuthInterface {
                 preg_match("#^http://steamcommunity.com/openid/id/([0-9]{17,25})#", $get['openid_claimed_id'], $matches);
                 $this->steamId = is_numeric($matches[1]) ? $matches[1] : 0;
                 $this->parseInfo();
-                $response = preg_match("#is_valid\s*:\s*true#i", $result) == 1 ? true : false;
-            } catch (Exception $e) {
-                $response = false;
+                return (preg_match("#is_valid\s*:\s*true#i", $result) == 1 ? true : false);
             }
-            if (is_null($response)) {
-                throw new Exception('The Steam login request timed out or was invalid');
-            }
-            return $response;
+        } catch (\Exception $e) {
+            app('log')->error($e);
         }
-        else
-        {
-            return false;
-        }
+        
+        return false;
     }
 
     /**
@@ -115,13 +109,11 @@ class SteamAuth implements SteamAuthInterface {
      */
     private function buildUrl($return = null)
     {
-        if (!is_null($return)) {
-            if (!$this->validateUrl($return)) {
-                throw new Exception('The return URL must be a valid URL with a URI Scheme or http or https.');
-            }
-        }
-        else {
+        if(is_null($return)) {
             $return = url('/', [], \Config::get('steam-auth.https'));
+        }
+        if (!is_null($return) && !$this->validateUrl($return)) {
+            throw new Exception('The return URL must be a valid URL with a URI Scheme or http or https.');
         }
 
         $params = array(
