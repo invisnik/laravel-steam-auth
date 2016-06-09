@@ -43,49 +43,59 @@ class SteamAuth implements SteamAuthInterface {
     }
 
     /**
+    * Validates if the request object has required stream attributes.
+    *
+    * @return bool
+    */
+    private function requestIsValid()
+    {
+        return $this->request->has('openid_assoc_handle') && $this->request->has('openid_signed') && $this->request->has('openid_sig');
+    }
+
+    /**
      * Checks the steam login
      *
      * @return bool
      */
     public function validate()
     {
+        if (!$this->requestIsValid()) {
+            return false;
+        }
+
         try {
-            if($this->request->has('openid_assoc_handle') && $this->request->has('openid_signed') && $this->request->has('openid_sig')) {
-                $get = $this->request->all();
-                $params = [
-                    'openid.assoc_handle' => $get['openid_assoc_handle'],
-                    'openid.signed' => $get['openid_signed'],
-                    'openid.sig' => $get['openid_sig'],
-                    'openid.ns' => 'http://specs.openid.net/auth/2.0',
-                ];
-                $signed = explode(',', $get['openid_signed']);
-                foreach ($signed as $item) {
-                    $val = $get['openid_' . str_replace('.', '_', $item)];
-                    $params['openid.' . $item] = get_magic_quotes_gpc() ? stripslashes($val) : $val;
-                }
-                $params['openid.mode'] = 'check_authentication';
-                $data = http_build_query($params);
-                $context = stream_context_create(array(
-                    'http' => array(
-                        'method' => 'POST',
-                        'header' =>
-                            "Accept-language: en\r\n" .
-                            "Content-type: application/x-www-form-urlencoded\r\n" .
-                            "Content-Length: " . strlen($data) . "\r\n",
-                        'content' => $data,
-                    ),
-                ));
-                $result = file_get_contents(self::OPENID_URL, false, $context);
-                preg_match("#^http://steamcommunity.com/openid/id/([0-9]{17,25})#", $get['openid_claimed_id'], $matches);
-                $this->steamId = is_numeric($matches[1]) ? $matches[1] : 0;
-                $this->parseInfo();
-                return (preg_match("#is_valid\s*:\s*true#i", $result) == 1 ? true : false);
+            $get = $this->request->all();
+            $params = [
+                'openid.assoc_handle' => $get['openid_assoc_handle'],
+                'openid.signed' => $get['openid_signed'],
+                'openid.sig' => $get['openid_sig'],
+                'openid.ns' => 'http://specs.openid.net/auth/2.0',
+            ];
+            $signed = explode(',', $get['openid_signed']);
+            foreach ($signed as $item) {
+                $val = $get['openid_' . str_replace('.', '_', $item)];
+                $params['openid.' . $item] = get_magic_quotes_gpc() ? stripslashes($val) : $val;
             }
+            $params['openid.mode'] = 'check_authentication';
+            $data = http_build_query($params);
+            $context = stream_context_create(array(
+                'http' => array(
+                    'method' => 'POST',
+                    'header' =>
+                        "Accept-language: en\r\n" .
+                        "Content-type: application/x-www-form-urlencoded\r\n" .
+                        "Content-Length: " . strlen($data) . "\r\n",
+                    'content' => $data,
+                ),
+            ));
+            $result = file_get_contents(self::OPENID_URL, false, $context);
+            preg_match("#^http://steamcommunity.com/openid/id/([0-9]{17,25})#", $get['openid_claimed_id'], $matches);
+            $this->steamId = is_numeric($matches[1]) ? $matches[1] : 0;
+            $this->parseInfo();
+            return (preg_match("#is_valid\s*:\s*true#i", $result) == 1 ? true : false);
         } catch (\Exception $e) {
             app('log')->error($e);
         }
-        
-        return false;
     }
 
     /**
