@@ -1,5 +1,6 @@
 # Steam authentication for laravel 5
-[![Latest Stable Version](https://poser.pugx.org/invisnik/laravel-steam-auth/v/stable.svg)](https://packagist.org/packages/invisnik/laravel-steam-auth) 
+[![Code Climate](https://codeclimate.com/github/invisnik/laravel-steam-auth/badges/gpa.svg)](https://codeclimate.com/github/invisnik/laravel-steam-auth)
+[![Latest Stable Version](https://poser.pugx.org/invisnik/laravel-steam-auth/v/stable)](https://packagist.org/packages/invisnik/laravel-steam-auth) 
 [![Total Downloads](https://poser.pugx.org/invisnik/laravel-steam-auth/downloads)](https://packagist.org/packages/invisnik/laravel-steam-auth)
 [![License](https://poser.pugx.org/invisnik/laravel-steam-auth/license.svg)](https://packagist.org/packages/invisnik/laravel-steam-auth)
 
