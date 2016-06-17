@@ -46,6 +46,10 @@ return [
      * Is using https?
      */
     'https' => false
+    /*
+     * Use custom realm?
+     */
+    'realm' => false
 ];
 
 ```
