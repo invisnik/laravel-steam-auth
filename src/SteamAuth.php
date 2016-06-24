@@ -4,7 +4,8 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 
-class SteamAuth implements SteamAuthInterface {
+class SteamAuth implements SteamAuthInterface
+{
 
     /**
      * @var integer|null
@@ -25,7 +26,7 @@ class SteamAuth implements SteamAuthInterface {
      * @var Request
      */
     private $request;
-    
+
     /**
      * @var string
      */
@@ -39,14 +40,15 @@ class SteamAuth implements SteamAuthInterface {
     public function __construct(Request $request)
     {
         $this->request = $request;
-        $this->authUrl = $this->buildUrl(url(Config::get('steam-auth.redirect_url'), [], Config::get('steam-auth.https')));
+        $this->authUrl = $this->buildUrl(url(Config::get('steam-auth.redirect_url'), [],
+            Config::get('steam-auth.https')));
     }
 
     /**
-    * Validates if the request object has required stream attributes.
-    *
-    * @return bool
-    */
+     * Validates if the request object has required stream attributes.
+     *
+     * @return bool
+     */
     private function requestIsValid()
     {
         return $this->request->has('openid_assoc_handle') && $this->request->has('openid_signed') && $this->request->has('openid_sig');
@@ -67,9 +69,9 @@ class SteamAuth implements SteamAuthInterface {
             $get = $this->request->all();
             $params = [
                 'openid.assoc_handle' => $get['openid_assoc_handle'],
-                'openid.signed' => $get['openid_signed'],
-                'openid.sig' => $get['openid_sig'],
-                'openid.ns' => 'http://specs.openid.net/auth/2.0',
+                'openid.signed'       => $get['openid_signed'],
+                'openid.sig'          => $get['openid_sig'],
+                'openid.ns'           => 'http://specs.openid.net/auth/2.0',
             ];
             $signed = explode(',', $get['openid_signed']);
             foreach ($signed as $item) {
@@ -80,8 +82,8 @@ class SteamAuth implements SteamAuthInterface {
             $data = http_build_query($params);
             $context = stream_context_create(array(
                 'http' => array(
-                    'method' => 'POST',
-                    'header' =>
+                    'method'  => 'POST',
+                    'header'  =>
                         "Accept-language: en\r\n" .
                         "Content-type: application/x-www-form-urlencoded\r\n" .
                         "Content-Length: " . strlen($data) . "\r\n",
@@ -92,6 +94,7 @@ class SteamAuth implements SteamAuthInterface {
             preg_match("#^http://steamcommunity.com/openid/id/([0-9]{17,25})#", $get['openid_claimed_id'], $matches);
             $this->steamId = is_numeric($matches[1]) ? $matches[1] : 0;
             $this->parseInfo();
+
             return (preg_match("#is_valid\s*:\s*true#i", $result) == 1 ? true : false);
         } catch (\Exception $e) {
             app('log')->error($e);
@@ -102,6 +105,7 @@ class SteamAuth implements SteamAuthInterface {
      * Validates a given URL, ensuring it contains the http or https URI Scheme
      *
      * @param string $url
+     *
      * @return bool
      */
     private function validateUrl($url)
@@ -109,6 +113,7 @@ class SteamAuth implements SteamAuthInterface {
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
             return false;
         }
+
         return true;
     }
 
@@ -116,11 +121,12 @@ class SteamAuth implements SteamAuthInterface {
      * Build the Steam login URL
      *
      * @param string $return A custom return to URL
+     *
      * @return string
      */
     private function buildUrl($return = null)
     {
-        if(is_null($return)) {
+        if (is_null($return)) {
             $return = url('/', [], Config::get('steam-auth.https'));
         }
         if (!is_null($return) && !$this->validateUrl($return)) {
@@ -128,13 +134,14 @@ class SteamAuth implements SteamAuthInterface {
         }
 
         $params = array(
-            'openid.ns' => 'http://specs.openid.net/auth/2.0',
-            'openid.mode' => 'checkid_setup',
-            'openid.return_to' => $return,
-            'openid.realm' => (Config::get('steam-auth.https') ? 'https' : 'http') . '://' . $this->request->server('HTTP_HOST'),
-            'openid.identity' => 'http://specs.openid.net/auth/2.0/identifier_select',
+            'openid.ns'         => 'http://specs.openid.net/auth/2.0',
+            'openid.mode'       => 'checkid_setup',
+            'openid.return_to'  => $return,
+            'openid.realm'      => (Config::get('steam-auth.https') ? 'https' : 'http') . '://' . $this->request->server('HTTP_HOST'),
+            'openid.identity'   => 'http://specs.openid.net/auth/2.0/identifier_select',
             'openid.claimed_id' => 'http://specs.openid.net/auth/2.0/identifier_select',
         );
+
         return self::OPENID_URL . '?' . http_build_query($params, '', '&');
     }
 
@@ -153,10 +160,11 @@ class SteamAuth implements SteamAuthInterface {
      *
      * @return void
      */
-    public function parseInfo() {
-        if(!is_null($this->steamId)) {
+    public function parseInfo()
+    {
+        if (!is_null($this->steamId)) {
             $json = file_get_contents(sprintf(self::STEAM_INFO_URL, Config::get('steam-auth.api_key'), $this->steamId));
-            $json = json_decode($json, TRUE);
+            $json = json_decode($json, true);
             $this->steamInfo = new SteamInfo($json["response"]["players"][0]);
         }
     }
@@ -176,7 +184,8 @@ class SteamAuth implements SteamAuthInterface {
      *
      * @return SteamInfo
      */
-    public function getUserInfo(){
+    public function getUserInfo()
+    {
         return $this->steamInfo;
     }
 
@@ -185,7 +194,8 @@ class SteamAuth implements SteamAuthInterface {
      *
      * @return bool|string
      */
-    public function getSteamId(){
+    public function getSteamId()
+    {
         return $this->steamId;
     }
 
