@@ -16,6 +16,12 @@ class SteamInfo
     protected $profileState;
     protected $personaState;
     protected $communityVisibilityState;
+    protected $commentPermission;
+    protected $gameId;
+    protected $gameServerIp;
+    protected $gameExtraInfo;
+    protected $stateCode;
+    protected $cityId;
 
     function __construct($data)
     {
@@ -33,6 +39,12 @@ class SteamInfo
         $this->profileState             = isset($data["profilestate"]) ? $data["profilestate"] : null;
         $this->personaState             = isset($data["personastate"]) ? $data["personastate"] : null;
         $this->communityVisibilityState = isset($data["communityvisibilitystate"]) ? $data["communityvisibilitystate"] : null;
+        $this->commentPermission        = isset($data["commentpermission"]) ? $data["commentpermission"] : null;
+        $this->gameId                   = isset($data["gameid"]) ? $data["gameid"] : null;
+        $this->gameServerIp             = isset($data["gameserverip"]) ? $data["gameserverip"] : null;
+        $this->gameExtraInfo            = isset($data["gameextrainfo"]) ? $data["gameextrainfo"] : null;
+        $this->stateCode                = isset($data["locstatecode"]) ? $data["locstatecode"] : null;
+        $this->cityId                   = isset($data["loccityid"]) ? $data["loccityid"] : null;
     }
 
     /**
@@ -160,5 +172,53 @@ class SteamInfo
     public function getCommunityVisibilityState()
     {
         return $this->communityVisibilityState;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCommentPermission()
+    {
+        return $this->commentPermission;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGameId()
+    {
+        return $this->gameId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGameServerIp()
+    {
+        return $this->gameServerIp;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGameExtraInfo()
+    {
+        return $this->gameExtraInfo;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStateCode()
+    {
+        return $this->stateCode;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCityId()
+    {
+        return $this->cityId;
     }
 }
