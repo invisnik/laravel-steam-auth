@@ -13,20 +13,26 @@ class SteamInfo
     protected $clanID;
     protected $createdAt;
     protected $countryCode;
+    protected $profileState;
+    protected $personaState;
+    protected $communityVisibilityState;
 
     function __construct($data)
     {
-        $this->steamID64            = isset($data["steamid"]) ? $data["steamid"] : null;
-        $this->nick                 = isset($data["personaname"]) ? $data["personaname"] : null;
-        $this->lastLogin            = isset($data["lastlogoff"]) ? $data["lastlogoff"] : null;
-        $this->profileURL           = isset($data["profileurl"]) ? $data["profileurl"] : null;
-        $this->profilePicture       = isset($data["avatar"]) ? $data["avatar"] : null;
-        $this->profilePictureMedium = isset($data["avatarmedium"]) ? $data["avatarmedium"] : null;
-        $this->profilePictureFull   = isset($data["avatarfull"]) ? $data["avatarfull"] : null;
-        $this->name                 = isset($data["realname"]) ? $data["realname"] : null;
-        $this->clanID               = isset($data["primaryclanid"]) ? $data["primaryclanid"] : null;
-        $this->createdAt            = isset($data["timecreated"]) ? $data["timecreated"] : null;
-        $this->countryCode          = isset($data["loccountrycode"]) ? $data["loccountrycode"] : null;
+        $this->steamID64                = isset($data["steamid"]) ? $data["steamid"] : null;
+        $this->nick                     = isset($data["personaname"]) ? $data["personaname"] : null;
+        $this->lastLogin                = isset($data["lastlogoff"]) ? $data["lastlogoff"] : null;
+        $this->profileURL               = isset($data["profileurl"]) ? $data["profileurl"] : null;
+        $this->profilePicture           = isset($data["avatar"]) ? $data["avatar"] : null;
+        $this->profilePictureMedium     = isset($data["avatarmedium"]) ? $data["avatarmedium"] : null;
+        $this->profilePictureFull       = isset($data["avatarfull"]) ? $data["avatarfull"] : null;
+        $this->name                     = isset($data["realname"]) ? $data["realname"] : null;
+        $this->clanID                   = isset($data["primaryclanid"]) ? $data["primaryclanid"] : null;
+        $this->createdAt                = isset($data["timecreated"]) ? $data["timecreated"] : null;
+        $this->countryCode              = isset($data["loccountrycode"]) ? $data["loccountrycode"] : null;
+        $this->profileState             = isset($data["profilestate"]) ? $data["profilestate"] : null;
+        $this->personaState             = isset($data["personastate"]) ? $data["personastate"] : null;
+        $this->communityVisibilityState = isset($data["communityvisibilitystate"]) ? $data["communityvisibilitystate"] : null;
     }
 
     /**
@@ -130,5 +136,29 @@ class SteamInfo
     public function getCountryCode()
     {
         return $this->countryCode;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProfileState()
+    {
+        return $this->profileState;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPersonaState()
+    {
+        return $this->personaState;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCommunityVisibilityState()
+    {
+        return $this->communityVisibilityState;
     }
 }
