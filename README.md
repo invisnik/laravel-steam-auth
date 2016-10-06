@@ -78,11 +78,11 @@ class AuthController extends Controller
         if ($this->steam->validate()) {
             $info = $this->steam->getUserInfo();
             if (!is_null($info)) {
-                $user = User::where('steamid', $info->getSteamID64())->first();
+                $user = User::where('steamid', $info->steamID64)->first();
                 if (is_null($user)) {
                     $user = User::create([
                         'username' => $info->personaname,
-                        'avatar'   => $info->avatarfull),
+                        'avatar'   => $info->avatarfull,
                         'steamid'  => $info->steamID64
                     ]);
                 }
