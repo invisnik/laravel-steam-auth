@@ -1,6 +1,6 @@
 # Steam authentication for laravel 5
 [![Code Climate](https://codeclimate.com/github/invisnik/laravel-steam-auth/badges/gpa.svg)](https://codeclimate.com/github/invisnik/laravel-steam-auth)
-[![Latest Stable Version](https://poser.pugx.org/invisnik/laravel-steam-auth/v/stable)](https://packagist.org/packages/invisnik/laravel-steam-auth) 
+[![Latest Stable Version](https://poser.pugx.org/invisnik/laravel-steam-auth/v/stable)](https://packagist.org/packages/invisnik/laravel-steam-auth)
 [![Total Downloads](https://poser.pugx.org/invisnik/laravel-steam-auth/downloads)](https://packagist.org/packages/invisnik/laravel-steam-auth)
 [![License](https://poser.pugx.org/invisnik/laravel-steam-auth/license.svg)](https://packagist.org/packages/invisnik/laravel-steam-auth)
 
@@ -81,9 +81,9 @@ class AuthController extends Controller
                 $user = User::where('steamid', $info->getSteamID64())->first();
                 if (is_null($user)) {
                     $user = User::create([
-                        'username' => $info->getNick(),
-                        'avatar'   => $info->getProfilePictureFull(),
-                        'steamid'  => $info->getSteamID64()
+                        'username' => $info->personaname,
+                        'avatar'   => $info->avatarfull),
+                        'steamid'  => $info->steamID64
                     ]);
                 }
             	Auth::login($user, true);
