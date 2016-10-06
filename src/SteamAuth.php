@@ -4,7 +4,6 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use GuzzleHttp\Client as GuzzleClient;
-use GuzzleHttp\Psr7\Request as GuzzleRequest;
 use Illuminate\Support\Fluent;
 
 class SteamAuth implements SteamAuthInterface
