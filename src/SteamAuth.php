@@ -3,6 +3,8 @@
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
+use GuzzleHttp\Client as GuzzleClient;
+use Illuminate\Support\Fluent;
 
 class SteamAuth implements SteamAuthInterface
 {
@@ -28,6 +30,11 @@ class SteamAuth implements SteamAuthInterface
     private $request;
 
     /**
+     * @var GuzzleHttp\Client
+     */
+    private $guzzleClient;
+
+    /**
      * @var string
      */
     const OPENID_URL = 'https://steamcommunity.com/openid/login';
@@ -37,11 +44,18 @@ class SteamAuth implements SteamAuthInterface
      */
     const STEAM_INFO_URL = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=%s&steamids=%s';
 
+    /**
+     * Create a new SteamAuth instance
+     *
+     * @param Request $request
+     * @return void
+     */
     public function __construct(Request $request)
     {
         $this->request = $request;
         $this->authUrl = $this->buildUrl(url(Config::get('steam-auth.redirect_url'), [],
             Config::get('steam-auth.https')));
+        $this->guzzleClient  = new GuzzleClient;
     }
 
     /**
@@ -51,7 +65,9 @@ class SteamAuth implements SteamAuthInterface
      */
     private function requestIsValid()
     {
-        return $this->request->has('openid_assoc_handle') && $this->request->has('openid_signed') && $this->request->has('openid_sig');
+        return $this->request->has('openid_assoc_handle')
+               && $this->request->has('openid_signed')
+               && $this->request->has('openid_sig');
     }
 
     /**
@@ -65,40 +81,64 @@ class SteamAuth implements SteamAuthInterface
             return false;
         }
 
-        try {
-            $get = $this->request->all();
-            $params = [
-                'openid.assoc_handle' => $get['openid_assoc_handle'],
-                'openid.signed'       => $get['openid_signed'],
-                'openid.sig'          => $get['openid_sig'],
-                'openid.ns'           => 'http://specs.openid.net/auth/2.0',
-            ];
-            $signed = explode(',', $get['openid_signed']);
-            foreach ($signed as $item) {
-                $val = $get['openid_' . str_replace('.', '_', $item)];
-                $params['openid.' . $item] = get_magic_quotes_gpc() ? stripslashes($val) : $val;
-            }
-            $params['openid.mode'] = 'check_authentication';
-            $data = http_build_query($params);
-            $context = stream_context_create(array(
-                'http' => array(
-                    'method'  => 'POST',
-                    'header'  =>
-                        "Accept-language: en\r\n" .
-                        "Content-type: application/x-www-form-urlencoded\r\n" .
-                        "Content-Length: " . strlen($data) . "\r\n",
-                    'content' => $data,
-                ),
-            ));
-            $result = file_get_contents(self::OPENID_URL, false, $context);
-            preg_match("#^http://steamcommunity.com/openid/id/([0-9]{17,25})#", $get['openid_claimed_id'], $matches);
-            $this->steamId = is_numeric($matches[1]) ? $matches[1] : 0;
-            $this->parseInfo();
+        $params = $this->getParams();
 
-            return (preg_match("#is_valid\s*:\s*true#i", $result) == 1 ? true : false);
-        } catch (\Exception $e) {
-            app('log')->error($e);
+        $response = $this->guzzleClient->request('POST', self::OPENID_URL, [
+            'form_params' => $params
+        ]);
+
+        $results = $this->parseResults($response->getBody()->getContents());
+
+        $this->parseSteamID();
+        $this->parseInfo();
+
+        return $results->is_valid == "true";
+    }
+
+    /**
+     * Get param list for openId validation
+     *
+     * @return array
+     */
+    public function getParams()
+    {
+        $params = [
+            'openid.assoc_handle' => $this->request->get('openid_assoc_handle'),
+            'openid.signed'       => $this->request->get('openid_signed'),
+            'openid.sig'          => $this->request->get('openid_sig'),
+            'openid.ns'           => 'http://specs.openid.net/auth/2.0',
+            'openid.mode'         => 'check_authentication'
+        ];
+
+        $signedParams = explode(',', $this->request->get('openid_signed'));
+
+        foreach ($signedParams as $item) {
+            $value = $this->request->get('openid_' . str_replace('.', '_', $item));
+            $params['openid.' . $item] = get_magic_quotes_gpc() ? stripslashes($value) : $value;
         }
+
+        return $params;
+    }
+
+    /**
+     * Parse openID reponse to fluent object
+     *
+     * @param  string $results openid reponse body
+     * @return Fluent
+     */
+    public function parseResults($results)
+    {
+        $parsed = [];
+        $lines = explode("\n", $results);
+
+        foreach ($lines as $line) {
+            if (empty($line)) continue;
+
+            $line = explode(':', $line, 2);
+            $parsed[$line[0]] = $line[1];
+        }
+
+        return new Fluent($parsed);
     }
 
     /**
@@ -156,17 +196,29 @@ class SteamAuth implements SteamAuthInterface
     }
 
     /**
+     * Parse the steamID from the OpenID response
+     *
+     * @return void
+     */
+    public function parseSteamID()
+    {
+        preg_match("#^http://steamcommunity.com/openid/id/([0-9]{17,25})#", $this->request->get('openid_claimed_id'), $matches);
+        $this->steamId = is_numeric($matches[1]) ? $matches[1] : 0;
+    }
+
+    /**
      * Get user data from steam api
      *
      * @return void
      */
     public function parseInfo()
     {
-        if (!is_null($this->steamId)) {
-            $json = file_get_contents(sprintf(self::STEAM_INFO_URL, Config::get('steam-auth.api_key'), $this->steamId));
-            $json = json_decode($json, true);
-            $this->steamInfo = new SteamInfo($json["response"]["players"][0]);
-        }
+        if (is_null($this->steamId)) return;
+
+        $reponse = $this->guzzleClient->request('GET', sprintf(self::STEAM_INFO_URL, Config::get('steam-auth.api_key'), $this->steamId));
+        $json = json_decode($reponse->getBody(), true);
+
+        $this->steamInfo = new SteamInfo($json["response"]["players"][0]);
     }
 
     /**
