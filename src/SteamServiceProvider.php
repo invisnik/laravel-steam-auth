@@ -29,7 +29,7 @@ class SteamServiceProvider extends ServiceProvider {
     public function register()
     {
         $this->app->singleton('steamauth', function () {
-            return new SteamAuth();
+            return new SteamAuth($this->app->request);
         });
     }
 
