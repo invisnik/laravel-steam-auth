@@ -50,10 +50,13 @@ class SteamAuth implements SteamAuthInterface
      * @param Request $request
      * @return void
      */
-    public function __construct(Request $request)
+    public function __construct(Request $request, $redirect_url = null)
     {
         $this->request = $request;
-        $this->authUrl = $this->buildUrl(url(Config::get('steam-auth.redirect_url'), [],
+        if(!$redirect_url){
+            $redirect_url = Config::get('steam-auth.redirect_url');
+        }
+        $this->authUrl = $this->buildUrl(url($redirect_url, [],
             Config::get('steam-auth.https')));
         $this->guzzleClient  = new GuzzleClient;
     }
