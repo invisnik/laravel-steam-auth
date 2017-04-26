@@ -53,6 +53,10 @@ In `routes.php`
 ```php
 get('login', 'AuthController@login');
 ```
+**Note:** if you want to keep using Laravel's default logout route, add the following as well:
+```php
+Route::post('logout', 'Auth\LoginController@logout');
+```
 In `AuthController`
 ```php
 namespace App\Http\Controllers;
