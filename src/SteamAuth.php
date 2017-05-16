@@ -49,8 +49,12 @@ class SteamAuth implements SteamAuthInterface
      *
      * @param Request $request
      */
-    public function __construct(Request $request)
+    public function __construct(Request $request = null)
     {
+        if (!$request) {
+            $request = new Request();
+        }
+        
         $this->request = $request;
         $this->authUrl = $this->buildUrl(url(Config::get('steam-auth.redirect_url'), [],
             Config::get('steam-auth.https')));
