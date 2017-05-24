@@ -105,6 +105,6 @@ Should you wish to use a login redirection URL that is differant from the one yo
 ```
     public function __construct(Request $request)
     {
-        $this->steam = SteamAuth($request, '/redirect/path');
+        $this->steam = new SteamAuth($request, '/redirect/path');
     }
 ```
