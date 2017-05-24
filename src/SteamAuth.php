@@ -30,7 +30,7 @@ class SteamAuth implements SteamAuthInterface
     private $request;
 
     /**
-     * @var GuzzleHttp\Client
+     * @var GuzzleClient
      */
     private $guzzleClient;
 
@@ -48,7 +48,6 @@ class SteamAuth implements SteamAuthInterface
      * Create a new SteamAuth instance
      *
      * @param Request $request
-     * @return void
      */
     public function __construct(Request $request, $redirect_url = null)
     {

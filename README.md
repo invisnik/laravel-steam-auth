@@ -49,9 +49,13 @@ return [
 ];
 
 ```
-In `routes.php`
+In `routes/web.php`
 ```php
-get('login', 'AuthController@login');
+Route::get('login', 'AuthController@login')->name('login');
+```
+**Note:** if you want to keep using Laravel's default logout route, add the following as well:
+```php
+Route::post('logout', 'Auth\LoginController@logout')->name('logout');
 ```
 In `AuthController`
 ```php
