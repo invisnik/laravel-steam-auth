@@ -99,3 +99,12 @@ class AuthController extends Controller
 }
 
 ```
+
+Should you wish to use a login redirection URL that is differant from the one you specified in the config
+
+```
+    public function __construct(Request $request)
+    {
+        $this->steam = SteamAuth($request, '/redirect/path');
+    }
+```
