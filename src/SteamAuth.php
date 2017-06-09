@@ -72,9 +72,10 @@ class SteamAuth implements SteamAuthInterface
     /**
      * Checks the steam login
      *
+     * @param bool $parseInfo whether to parse info
      * @return bool
      */
-    public function validate()
+    public function validate($parseInfo = true)
     {
         if (!$this->requestIsValid()) {
             return false;
@@ -89,7 +90,7 @@ class SteamAuth implements SteamAuthInterface
         $results = $this->parseResults($response->getBody()->getContents());
 
         $this->parseSteamID();
-        $this->parseInfo();
+        if ($parseInfo) $this->parseInfo();
 
         return $results->is_valid == "true";
     }
