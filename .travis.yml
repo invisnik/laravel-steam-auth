@@ -3,6 +3,9 @@ language: php
 ## Run on container environment
 sudo: false
 
+## Run on ubuntu trusty
+dist: trusty
+
 ## Cache composer bits
 cache:
   directories:
