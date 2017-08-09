@@ -24,5 +24,12 @@
         "psr-4": {
             "Invisnik\\LaravelSteamAuth\\": "src"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": {
+                "Invisnik\\LaravelSteamAuth\\SteamServiceProvider"
+            }
+        }
     }
 }
