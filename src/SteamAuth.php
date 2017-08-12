@@ -1,6 +1,6 @@
 <?php namespace Invisnik\LaravelSteamAuth;
 
-use Exception;
+use RuntimeException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use GuzzleHttp\Client as GuzzleClient;
@@ -169,7 +169,7 @@ class SteamAuth implements SteamAuthInterface
             $return = url('/', [], Config::get('steam-auth.https'));
         }
         if (!is_null($return) && !$this->validateUrl($return)) {
-            throw new Exception('The return URL must be a valid URL with a URI Scheme or http or https.');
+            throw new RuntimeException('The return URL must be a valid URL with a URI Scheme or http or https.');
         }
 
         $params = array(
@@ -213,6 +213,10 @@ class SteamAuth implements SteamAuthInterface
     public function parseInfo()
     {
         if (is_null($this->steamId)) return;
+
+        if(!empty(Config::get('steam-auth.api_key'))) {
+            throw new RuntimeException('The Steam API key has not been specified.');
+        }
 
         $reponse = $this->guzzleClient->request('GET', sprintf(self::STEAM_INFO_URL, Config::get('steam-auth.api_key'), $this->steamId));
         $json = json_decode($reponse->getBody(), true);

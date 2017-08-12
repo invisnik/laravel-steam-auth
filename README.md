@@ -15,6 +15,8 @@ Add this to your `composer.json` file, in the require object:
 
 After that, run `composer install` to install the package.
 
+#### Laravel 5.4 and below
+
 Add the service provider to `app/config/app.php`, within the `providers` array.
 
 ```php
@@ -23,6 +25,18 @@ Add the service provider to `app/config/app.php`, within the `providers` array.
 	Invisnik\LaravelSteamAuth\SteamServiceProvider::class,
 ]
 ```
+
+Package is automatically added if you are in Laravel 5.5
+
+#### Steam API Key
+
+Add your Steam API key to your `.env` file. You can your API key [here](http://steamcommunity.com/dev/apikey).
+
+```
+STEAM_API_KEY=SomeKindOfAPIKey
+```
+
+#### Config Files
 
 Lastly, publish the config file.
 
@@ -39,9 +53,9 @@ return [
      */
     'redirect_url' => '/login',
     /*
-     *  API Key (http://steamcommunity.com/dev/apikey)
+     *  API Key (set in .env file) [http://steamcommunity.com/dev/apikey]
      */
-    'api_key' => 'Your API Key',
+    'api_key' => env('STEAM_API_KEY', ''),
     /*
      * Is using https?
      */
