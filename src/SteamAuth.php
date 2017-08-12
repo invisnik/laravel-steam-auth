@@ -214,7 +214,7 @@ class SteamAuth implements SteamAuthInterface
     {
         if (is_null($this->steamId)) return;
 
-        if(!empty(Config::get('steam-auth.api_key'))) {
+        if(empty(Config::get('steam-auth.api_key'))) {
             throw new RuntimeException('The Steam API key has not been specified.');
         }
 
