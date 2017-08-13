@@ -10,7 +10,7 @@ This package is a Laravel 5 service provider which provides support for Steam Op
 Add this to your `composer.json` file, in the require object:
 
 ```javascript
-"invisnik/laravel-steam-auth": "2.*"
+"invisnik/laravel-steam-auth": "3.*"
 ```
 
 After that, run `composer install` to install the package.
