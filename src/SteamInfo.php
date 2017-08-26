@@ -21,10 +21,11 @@ class SteamInfo extends Fluent
 
     /**
      * Get SteamID
+     *
      * @param  string $value
      * @return string
      */
-    public function getSteamID ($value)
+    public function getSteamID($value)
     {
         if (is_null($value)) return '';
 
