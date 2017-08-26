@@ -54,7 +54,7 @@ class SteamAuth implements SteamAuthInterface
         $this->request = $request;
         $this->authUrl = $this->buildUrl(url(Config::get('steam-auth.redirect_url'), [],
             Config::get('steam-auth.https')));
-        $this->guzzleClient  = new GuzzleClient;
+        $this->guzzleClient = new GuzzleClient;
     }
 
     /**
@@ -91,7 +91,7 @@ class SteamAuth implements SteamAuthInterface
         $this->parseSteamID();
         $this->parseInfo();
 
-        return $results->is_valid == "true";
+        return $results->is_valid == 'true';
     }
 
     /**
@@ -159,7 +159,7 @@ class SteamAuth implements SteamAuthInterface
     /**
      * Build the Steam login URL
      *
-     * @param string $return A custom return to URL
+     * @param string|null $return A custom return to URL
      *
      * @return string
      */
@@ -169,7 +169,7 @@ class SteamAuth implements SteamAuthInterface
             $return = url('/', [], Config::get('steam-auth.https'));
         }
         if (!is_null($return) && !$this->validateUrl($return)) {
-            throw new RuntimeException('The return URL must be a valid URL with a URI Scheme or http or https.');
+            throw new RuntimeException('The return URL must be a valid URL with a URI scheme or http or https.');
         }
 
         $params = array(
@@ -214,14 +214,14 @@ class SteamAuth implements SteamAuthInterface
     {
         if (is_null($this->steamId)) return;
 
-        if(empty(Config::get('steam-auth.api_key'))) {
+        if (empty(Config::get('steam-auth.api_key'))) {
             throw new RuntimeException('The Steam API key has not been specified.');
         }
 
         $reponse = $this->guzzleClient->request('GET', sprintf(self::STEAM_INFO_URL, Config::get('steam-auth.api_key'), $this->steamId));
         $json = json_decode($reponse->getBody(), true);
 
-        $this->steamInfo = new SteamInfo($json["response"]["players"][0]);
+        $this->steamInfo = new SteamInfo($json['response']['players'][0]);
     }
 
     /**
