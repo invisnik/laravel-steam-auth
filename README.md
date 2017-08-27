@@ -1,4 +1,4 @@
-# Steam authentication for laravel 5
+# Steam authentication for Laravel 5
 [![Code Climate](https://codeclimate.com/github/invisnik/laravel-steam-auth/badges/gpa.svg)](https://codeclimate.com/github/invisnik/laravel-steam-auth)
 [![Latest Stable Version](https://img.shields.io/packagist/v/invisnik/laravel-steam-auth.svg)](https://packagist.org/packages/invisnik/laravel-steam-auth)
 [![Total Downloads](https://img.shields.io/packagist/dt/invisnik/laravel-steam-auth.svg)](https://packagist.org/packages/invisnik/laravel-steam-auth)
@@ -26,7 +26,7 @@ Add the service provider to `app/config/app.php`, within the `providers` array.
 ]
 ```
 
-Package is automatically added if you are in Laravel 5.5
+The package is automatically added if you are in Laravel 5.5.
 
 #### Steam API Key
 
@@ -44,7 +44,7 @@ Lastly, publish the config file.
 php artisan vendor:publish
 ```
 ## Usage example
-In `config/steam-auth.php`
+In `config/steam-auth.php`:
 ```php
 return [
 
@@ -63,7 +63,7 @@ return [
 ];
 
 ```
-In `routes/web.php`
+In `routes/web.php`:
 ```php
 Route::get('login', 'AuthController@login')->name('login');
 ```
