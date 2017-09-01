@@ -32,7 +32,7 @@ class SteamAuth implements SteamAuthInterface
     /**
      * @var GuzzleClient
      */
-    private $guzzleClient;
+    protected $guzzleClient;
 
     /**
      * @var string
