@@ -1,8 +1,8 @@
-# Steam authentication for laravel 5
+# Steam authentication for Laravel 5
 [![Code Climate](https://codeclimate.com/github/invisnik/laravel-steam-auth/badges/gpa.svg)](https://codeclimate.com/github/invisnik/laravel-steam-auth)
-[![Latest Stable Version](https://poser.pugx.org/invisnik/laravel-steam-auth/v/stable)](https://packagist.org/packages/invisnik/laravel-steam-auth)
-[![Total Downloads](https://poser.pugx.org/invisnik/laravel-steam-auth/downloads)](https://packagist.org/packages/invisnik/laravel-steam-auth)
-[![License](https://poser.pugx.org/invisnik/laravel-steam-auth/license.svg)](https://packagist.org/packages/invisnik/laravel-steam-auth)
+[![Latest Stable Version](https://img.shields.io/packagist/v/invisnik/laravel-steam-auth.svg)](https://packagist.org/packages/invisnik/laravel-steam-auth)
+[![Total Downloads](https://img.shields.io/packagist/dt/invisnik/laravel-steam-auth.svg)](https://packagist.org/packages/invisnik/laravel-steam-auth)
+[![License](https://img.shields.io/github/license/invisnik/laravel-steam-auth.svg)](https://packagist.org/packages/invisnik/laravel-steam-auth)
 
 This package is a Laravel 5 service provider which provides support for Steam OpenID and is very easy to integrate with any project that requires Steam authentication.
 
@@ -10,10 +10,12 @@ This package is a Laravel 5 service provider which provides support for Steam Op
 Add this to your `composer.json` file, in the require object:
 
 ```javascript
-"invisnik/laravel-steam-auth": "2.*"
+"invisnik/laravel-steam-auth": "3.*"
 ```
 
 After that, run `composer install` to install the package.
+
+#### Laravel 5.4 and below
 
 Add the service provider to `app/config/app.php`, within the `providers` array.
 
@@ -24,24 +26,36 @@ Add the service provider to `app/config/app.php`, within the `providers` array.
 ]
 ```
 
+The package is automatically added if you are in Laravel 5.5.
+
+#### Steam API Key
+
+Add your Steam API key to your `.env` file. You can your API key [here](http://steamcommunity.com/dev/apikey).
+
+```
+STEAM_API_KEY=SomeKindOfAPIKey
+```
+
+#### Config Files
+
 Lastly, publish the config file.
 
 ```
 php artisan vendor:publish
 ```
 ## Usage example
-In `config/steam-auth.php`
+In `config/steam-auth.php`:
 ```php
 return [
 
     /*
      * Redirect URL after login
      */
-    'redirect_url' => '/login',
+    'redirect_url' => '/auth/steam/handle',
     /*
-     *  API Key (http://steamcommunity.com/dev/apikey)
+     *  API Key (set in .env file) [http://steamcommunity.com/dev/apikey]
      */
-    'api_key' => 'Your API Key',
+    'api_key' => env('STEAM_API_KEY', ''),
     /*
      * Is using https?
      */
@@ -49,15 +63,16 @@ return [
 ];
 
 ```
-In `routes/web.php`
+In `routes/web.php`:
 ```php
-Route::get('login', 'AuthController@login')->name('login');
+Route::get('auth/steam', 'AuthController@redirectToSteam')->name('auth.steam');
+Route::get('auth/steam/handle', 'AuthController@handle')->name('auth.steam.handle');
 ```
 **Note:** if you want to keep using Laravel's default logout route, add the following as well:
 ```php
 Route::post('logout', 'Auth\LoginController@logout')->name('logout');
 ```
-In `AuthController`
+In `AuthController`:
 ```php
 namespace App\Http\Controllers;
 
@@ -68,33 +83,79 @@ use Auth;
 class AuthController extends Controller
 {
     /**
+     * The SteamAuth instance.
+     *
      * @var SteamAuth
      */
-    private $steam;
+    protected $steam;
 
+    /**
+     * The redirect URL.
+     *
+     * @var string
+     */
+    protected $redirectURL = '/';
+
+    /**
+     * AuthController constructor.
+     * 
+     * @param SteamAuth $steam
+     */
     public function __construct(SteamAuth $steam)
     {
         $this->steam = $steam;
     }
 
-    public function login()
+    /**
+     * Redirect the user to the authentication page
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function redirectToSteam()
+    {
+        return $this->steam->redirect();
+    }
+
+    /**
+     * Get user info and log in
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function handle()
     {
         if ($this->steam->validate()) {
             $info = $this->steam->getUserInfo();
+
             if (!is_null($info)) {
-                $user = User::where('steamid', $info->steamID64)->first();
-                if (is_null($user)) {
-                    $user = User::create([
-                        'username' => $info->personaname,
-                        'avatar'   => $info->avatarfull,
-                        'steamid'  => $info->steamID64
-                    ]);
-                }
-            	Auth::login($user, true);
-            	return redirect('/'); // redirect to site
+                $user = $this->findOrNewUser($info);
+
+                Auth::login($user, true);
+
+                return redirect($this->redirectURL); // redirect to site
             }
         }
-        return $this->steam->redirect(); // redirect to Steam login page
+        return $this->redirectToSteam();
+    }
+
+    /**
+     * Getting user by info or created if not exists
+     *
+     * @param $info
+     * @return User
+     */
+    protected function findOrNewUser($info)
+    {
+        $user = User::where('steamid', $info->steamID64)->first();
+
+        if (!is_null($user)) {
+            return $user;
+        }
+
+        return User::create([
+            'username' => $info->personaname,
+            'avatar' => $info->avatarfull,
+            'steamid' => $info->steamID64
+        ]);
     }
 }
 

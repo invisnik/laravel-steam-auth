@@ -1,12 +1,36 @@
 language: php
+
+## Run on container environment
+sudo: false
+
+## Run on ubuntu trusty
+dist: trusty
+
+## Cache composer bits
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+## List all PHP versions to test with
 php:
-  - '5.5'
-  - '5.6'
-  - '7.0'
+  - 5.6
+  - 7.0
+  - 7.1
   - hhvm
+  - nightly
 
-before_script:
+matrix:
+  fast_finish: true
+  allow_failures:
+    - php: nightly
+    - php: hhvm
+
+## Install Dependencies
+install:
   - composer self-update
-  - composer install --prefer-source --no-interaction --dev
+  - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
+  - composer install --prefer-source --no-interaction
 
-script: phpunit
+## Run test Scripts
+script:
+  - vendor/bin/phpunit
