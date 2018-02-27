@@ -49,14 +49,14 @@ class SteamAuth implements SteamAuthInterface
      *
      * @param Request $request
      */
-    public function __construct(Request $request, $redirect_url = null)
+    public function __construct(Request $request)
     {
         $this->request = $request;
-        if(!$redirect_url){
-            $redirect_url = Config::get('steam-auth.redirect_url');
-        }
+        
+        $redirect_url = Config::get('steam-auth.redirect_url');
         $this->authUrl = $this->buildUrl(url($redirect_url, [],
             Config::get('steam-auth.https')));
+        
         $this->guzzleClient = new GuzzleClient;
     }
 
@@ -186,6 +186,19 @@ class SteamAuth implements SteamAuthInterface
 
         return self::OPENID_URL . '?' . http_build_query($params, '', '&');
     }
+    
+    /**
+     * Set the url to return to.
+     *
+     * @param string $url Full URL to redirect to on Steam login
+     *
+     * @return void
+     */
+    public function setRedirectUrl($url)
+    {
+           $this->authUrl = $this->buildUrl($url);
+    }
+    
 
     /**
      * Returns the redirect response to login
