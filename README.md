@@ -165,7 +165,7 @@ Should you wish to use a login redirection URL that is differant from the one yo
 
 ```php
 // Inside your controller login method
-$this->$steam->setRedirectUrl(route('login.route'));
+$this->steam->setRedirectUrl(route('login.route'));
 
 ...
 
