@@ -169,5 +169,5 @@ $this->$steam->setRedirectUrl(route('login.route'));
 
 ...
 
-return $this->$steam->redirect();
+return $this->steam->redirect();
 ```
