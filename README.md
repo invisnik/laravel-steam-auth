@@ -171,3 +171,5 @@ $this->steam->setRedirectUrl(route('login.route'));
 
 return $this->steam->redirect();
 ```
+
+If you need another steamID you can use another package to convert the given steamID64 to another type like [xPaw/SteamID](https://github.com/xPaw/SteamID.php).
