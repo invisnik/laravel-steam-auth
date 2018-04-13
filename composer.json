@@ -25,6 +25,11 @@
             "Invisnik\\LaravelSteamAuth\\": "src"
         }
     },
+    "autoload-dev": {
+        "files": [
+            "tests/TestCase.php"
+        ]
+    },
     "extra": {
         "laravel": {
             "providers": [
