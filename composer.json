@@ -11,7 +11,6 @@
     ],
     "require": {
         "php": ">=5.5.0",
-        "ext-bcmath": "*",
         "guzzlehttp/guzzle": "^6.2",
         "illuminate/http": "5.*",
         "illuminate/routing": "5.*",
