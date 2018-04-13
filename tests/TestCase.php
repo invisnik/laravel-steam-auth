@@ -6,7 +6,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     {
         $filepath = realpath(__DIR__.'/data').'/'.$steamId.'.json';
 
-        if(!file_exists($filepath)) {
+        if (! file_exists($filepath)) {
             throw new InvalidArgumentException('there is no steaminfo data file for given steamid');
         }
 
