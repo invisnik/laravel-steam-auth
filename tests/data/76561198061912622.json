@@ -1,0 +1,25 @@
+{
+  "response": {
+    "players": [
+      {
+        "steamid": "76561198061912622",
+        "communityvisibilitystate": 3,
+        "profilestate": 1,
+        "personaname": "Gummibeer",
+        "lastlogoff": 1523196527,
+        "profileurl": "https://steamcommunity.com/id/gummibeer/",
+        "avatar": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/1f/1fde1e42ba3b684f6ff6e80bcc3fc947cd9a3d48.jpg",
+        "avatarmedium": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/1f/1fde1e42ba3b684f6ff6e80bcc3fc947cd9a3d48_medium.jpg",
+        "avatarfull": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/1f/1fde1e42ba3b684f6ff6e80bcc3fc947cd9a3d48_full.jpg",
+        "personastate": 1,
+        "realname": "Tom",
+        "primaryclanid": "103582791429521408",
+        "timecreated": 1334330552,
+        "personastateflags": 512,
+        "loccountrycode": "DE",
+        "locstatecode": "04",
+        "loccityid": 13004
+      }
+    ]
+  }
+}
