@@ -1,9 +1,11 @@
-<?php namespace Invisnik\LaravelSteamAuth;
+<?php
+
+namespace Invisnik\LaravelSteamAuth;
 
 use Illuminate\Support\ServiceProvider;
 
-class SteamServiceProvider extends ServiceProvider {
-
+class SteamServiceProvider extends ServiceProvider
+{
     /**
      * Indicates if loading of the provider is deferred.
      *
@@ -18,7 +20,7 @@ class SteamServiceProvider extends ServiceProvider {
      */
     public function boot()
     {
-        $this->publishes([__DIR__ . '/../config/config.php' => config_path('steam-auth.php')]);
+        $this->publishes([__DIR__.'/../config/config.php' => config_path('steam-auth.php')]);
     }
 
     /**
@@ -32,5 +34,4 @@ class SteamServiceProvider extends ServiceProvider {
             return new SteamAuth($this->app->request);
         });
     }
-
 }

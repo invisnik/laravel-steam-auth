@@ -1,10 +1,11 @@
-<?php namespace Invisnik\LaravelSteamAuth;
+<?php
+
+namespace Invisnik\LaravelSteamAuth;
 
 use Illuminate\Support\Fluent;
 
 class SteamInfo extends Fluent
 {
-
     /**
      * {@inheritdoc}
      */
