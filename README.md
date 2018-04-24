@@ -30,7 +30,7 @@ The package is automatically added if you are in Laravel 5.5.
 
 #### Steam API Key
 
-Add your Steam API key to your `.env` file. You can your API key [here](http://steamcommunity.com/dev/apikey).
+Add your Steam API key to your `.env` file. You can get your API key [here](http://steamcommunity.com/dev/apikey).
 
 ```
 STEAM_API_KEY=SomeKindOfAPIKey
