@@ -2,11 +2,13 @@
 
 namespace Invisnik\LaravelSteamAuth;
 
+use GuzzleHttp\RequestOptions;
 use RuntimeException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Fluent;
 use GuzzleHttp\Client as GuzzleClient;
 use Illuminate\Support\Facades\Config;
+use GuzzleHttp\Exception\GuzzleException;
 
 class SteamAuth implements SteamAuthInterface
 {
@@ -36,6 +38,11 @@ class SteamAuth implements SteamAuthInterface
     protected $guzzleClient;
 
     /**
+     * @var array
+     */
+    protected $customRequestOptions;
+
+    /**
      * @var string
      */
     const OPENID_URL = 'https://steamcommunity.com/openid/login';
@@ -44,6 +51,26 @@ class SteamAuth implements SteamAuthInterface
      * @var string
      */
     const STEAM_INFO_URL = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=%s&steamids=%s';
+
+    /**
+     * @var string
+     */
+    const OPENID_SIG = 'openid_sig';
+
+    /**
+     * @var string
+     */
+    const OPENID_SIGNED = 'openid_signed';
+
+    /**
+     * @var string
+     */
+    const OPENID_ASSOC_HANDLE = 'openid_assoc_handle';
+
+    /**
+     * @var string
+     */
+    const OPENID_NS = 'http://specs.openid.net/auth/2.0';
 
     /**
      * Create a new SteamAuth instance.
@@ -68,15 +95,16 @@ class SteamAuth implements SteamAuthInterface
      */
     private function requestIsValid()
     {
-        return $this->request->has('openid_assoc_handle')
-               && $this->request->has('openid_signed')
-               && $this->request->has('openid_sig');
+        return $this->request->has(self::OPENID_ASSOC_HANDLE)
+               && $this->request->has(self::OPENID_SIGNED)
+               && $this->request->has(self::OPENID_SIG);
     }
 
     /**
      * Checks the steam login.
      *
      * @return bool
+     * @throws GuzzleException
      */
     public function validate()
     {
@@ -84,11 +112,14 @@ class SteamAuth implements SteamAuthInterface
             return false;
         }
 
-        $params = $this->getParams();
+        $requestOptions = $this->getDefaultRequestOptions();
+        $customOptions = $this->getCustomRequestOptions();
 
-        $response = $this->guzzleClient->request('POST', self::OPENID_URL, [
-            'form_params' => $params,
-        ]);
+        if (!empty($customOptions) && is_array($customOptions)) {
+            $requestOptions = array_merge($requestOptions, $customOptions);
+        }
+
+        $response = $this->guzzleClient->request('POST', self::OPENID_URL, $requestOptions);
 
         $results = $this->parseResults($response->getBody()->getContents());
 
@@ -106,14 +137,14 @@ class SteamAuth implements SteamAuthInterface
     public function getParams()
     {
         $params = [
-            'openid.assoc_handle' => $this->request->get('openid_assoc_handle'),
-            'openid.signed'       => $this->request->get('openid_signed'),
-            'openid.sig'          => $this->request->get('openid_sig'),
-            'openid.ns'           => 'http://specs.openid.net/auth/2.0',
+            'openid.assoc_handle' => $this->request->get(self::OPENID_ASSOC_HANDLE),
+            'openid.signed'       => $this->request->get(self::OPENID_SIGNED),
+            'openid.sig'          => $this->request->get(self::OPENID_SIG),
+            'openid.ns'           => self::OPENID_NS,
             'openid.mode'         => 'check_authentication',
         ];
 
-        $signedParams = explode(',', $this->request->get('openid_signed'));
+        $signedParams = explode(',', $this->request->get(self::OPENID_SIGNED));
 
         foreach ($signedParams as $item) {
             $value = $this->request->get('openid_'.str_replace('.', '_', $item));
@@ -179,7 +210,7 @@ class SteamAuth implements SteamAuthInterface
         }
 
         $params = [
-            'openid.ns'         => 'http://specs.openid.net/auth/2.0',
+            'openid.ns'         => self::OPENID_NS,
             'openid.mode'       => 'checkid_setup',
             'openid.return_to'  => $return,
             'openid.realm'      => (Config::get('steam-auth.https') ? 'https' : 'http').'://'.$this->request->server('HTTP_HOST'),
@@ -227,6 +258,7 @@ class SteamAuth implements SteamAuthInterface
      * Get user data from steam api.
      *
      * @return void
+     * @throws GuzzleException
      */
     public function parseInfo()
     {
@@ -272,5 +304,34 @@ class SteamAuth implements SteamAuthInterface
     public function getSteamId()
     {
         return $this->steamId;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDefaultRequestOptions()
+    {
+        return [
+            RequestOptions::FORM_PARAMS => $this->getParams(),
+        ];
+    }
+    /**
+     * If you need to set additional guzzle options on request,
+     * set them via this method.
+     * @param $options
+     *
+     * @return void
+     */
+    public function setCustomRequestOptions($options)
+    {
+        $this->customRequestOptions = $options;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCustomRequestOptions()
+    {
+        return $this->customRequestOptions;
     }
 }
