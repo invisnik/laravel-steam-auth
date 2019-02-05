@@ -2,9 +2,9 @@
 
 namespace Invisnik\LaravelSteamAuth;
 
-use GuzzleHttp\RequestOptions;
 use RuntimeException;
 use Illuminate\Http\Request;
+use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Fluent;
 use GuzzleHttp\Client as GuzzleClient;
 use Illuminate\Support\Facades\Config;
@@ -115,7 +115,7 @@ class SteamAuth implements SteamAuthInterface
         $requestOptions = $this->getDefaultRequestOptions();
         $customOptions = $this->getCustomRequestOptions();
 
-        if (!empty($customOptions) && is_array($customOptions)) {
+        if (! empty($customOptions) && is_array($customOptions)) {
             $requestOptions = array_merge($requestOptions, $customOptions);
         }
 
@@ -315,6 +315,7 @@ class SteamAuth implements SteamAuthInterface
             RequestOptions::FORM_PARAMS => $this->getParams(),
         ];
     }
+
     /**
      * If you need to set additional guzzle options on request,
      * set them via this method.
