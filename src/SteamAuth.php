@@ -209,11 +209,13 @@ class SteamAuth implements SteamAuthInterface
             throw new RuntimeException('The return URL must be a valid URL with a URI scheme or http or https.');
         }
 
+        $realm = Config::get('steam-auth.realm', $this->request->server('HTTP_HOST'));
+        
         $params = [
             'openid.ns'         => self::OPENID_NS,
             'openid.mode'       => 'checkid_setup',
             'openid.return_to'  => $return,
-            'openid.realm'      => (Config::get('steam-auth.https') ? 'https' : 'http').'://'.$this->request->server('HTTP_HOST'),
+            'openid.realm'      => (Config::get('steam-auth.https') ? 'https' : 'http').'://'. $realm,
             'openid.identity'   => 'http://specs.openid.net/auth/2.0/identifier_select',
             'openid.claimed_id' => 'http://specs.openid.net/auth/2.0/identifier_select',
         ];
