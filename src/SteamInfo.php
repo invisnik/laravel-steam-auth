@@ -11,7 +11,7 @@ class SteamInfo extends Fluent
      */
     public function __construct($data)
     {
-        $steamID = isset($data['steamid']) ? $data['steamid'] : null;
+        $steamID = $data['steamid'] ?? null;
         unset($data['steamid']);
 
         parent::__construct($data);

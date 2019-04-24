@@ -1,4 +1,4 @@
-# Steam authentication for Laravel 5
+# Steam authentication for Laravel
 [![Code Climate](https://codeclimate.com/github/invisnik/laravel-steam-auth/badges/gpa.svg)](https://codeclimate.com/github/invisnik/laravel-steam-auth)
 [![Latest Stable Version](https://img.shields.io/packagist/v/invisnik/laravel-steam-auth.svg)](https://packagist.org/packages/invisnik/laravel-steam-auth)
 [![Total Downloads](https://img.shields.io/packagist/dt/invisnik/laravel-steam-auth.svg)](https://packagist.org/packages/invisnik/laravel-steam-auth)
@@ -7,26 +7,10 @@
 This package is a Laravel 5 service provider which provides support for Steam OpenID and is very easy to integrate with any project that requires Steam authentication.
 
 ## Installation Via Composer
-Add this to your `composer.json` file, in the require object:
 
-```javascript
-"invisnik/laravel-steam-auth": "3.*"
+```bash
+composer require invisnik/laravel-steam-auth
 ```
-
-After that, run `composer install` to install the package.
-
-#### Laravel 5.4 and below
-
-Add the service provider to `app/config/app.php`, within the `providers` array.
-
-```php
-'providers' => [
-	// ...
-	Invisnik\LaravelSteamAuth\SteamServiceProvider::class,
-]
-```
-
-The package is automatically added if you are in Laravel 5.5.
 
 #### Steam API Key
 
@@ -53,7 +37,8 @@ return [
      */
     'redirect_url' => '/auth/steam/handle',
     /*
-     * Realm override. Bypass domain ban by Valve. Use alternative domain with redirection to main for authentication (banned by valve).
+     * Realm override. Bypass domain ban by Valve. 
+     * Use alternative domain with redirection to main for authentication (banned by valve).
      */
     // 'realm' => 'redirected.com',
     /*

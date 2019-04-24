@@ -1,10 +1,13 @@
 <?php
 
+namespace Invisnik\LaravelSteamAuth\Tests\Unit;
+
 use Invisnik\LaravelSteamAuth\SteamInfo;
+use Invisnik\LaravelSteamAuth\Tests\TestCase;
 
 class SteamInfoTest extends TestCase
 {
-    public function test_construct()
+    public function testConstruct()
     {
         $data = $this->getSteamInfoData();
         $steamInfo = new SteamInfo($data);
@@ -12,7 +15,7 @@ class SteamInfoTest extends TestCase
         $this->assertInstanceOf(SteamInfo::class, $steamInfo);
     }
 
-    public function test_steamid()
+    public function testSteamid()
     {
         $data = $this->getSteamInfoData();
         $steamInfo = new SteamInfo($data);
