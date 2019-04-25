@@ -6,8 +6,12 @@
 
 This package is a Laravel 5 service provider which provides support for Steam OpenID and is very easy to integrate with any project that requires Steam authentication.
 
-## Installation Via Composer
+## Requirements
+ * PHP 7.1+
+ * Laravel 5.8+
 
+## Installation
+#### Via Composer
 ```bash
 composer require invisnik/laravel-steam-auth
 ```
@@ -22,10 +26,10 @@ STEAM_API_KEY=SomeKindOfAPIKey
 
 #### Config Files
 
-Lastly, publish the config file.
+Publish the config file.
 
 ```
-php artisan vendor:publish
+php artisan vendor:publish --provider="Invisnik\LaravelSteamAuth\SteamServiceProvider"
 ```
 ## Usage example
 In `config/steam-auth.php`:
