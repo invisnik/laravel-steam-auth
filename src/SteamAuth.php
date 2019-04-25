@@ -41,7 +41,7 @@ class SteamAuth implements SteamAuthInterface
     /**
      * @var array
      */
-    protected $customRequestOptions;
+    protected $customRequestOptions = [];
 
     /**
      * @var string
@@ -330,6 +330,7 @@ class SteamAuth implements SteamAuthInterface
     /**
      * If you need to set additional guzzle options on request,
      * set them via this method.
+     *
      * @param $options
      *
      * @return void
