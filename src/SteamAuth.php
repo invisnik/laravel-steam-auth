@@ -2,14 +2,14 @@
 
 namespace Invisnik\LaravelSteamAuth;
 
-use RuntimeException;
-use Illuminate\Http\Request;
-use GuzzleHttp\RequestOptions;
-use Illuminate\Support\Fluent;
-use Illuminate\Http\RedirectResponse;
 use GuzzleHttp\Client as GuzzleClient;
-use Illuminate\Support\Facades\Config;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\RequestOptions;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Fluent;
+use RuntimeException;
 
 class SteamAuth implements SteamAuthInterface
 {
