@@ -292,7 +292,7 @@ class SteamAuth implements SteamAuthInterface
      *
      * @return string|null
      */
-    public function getAuthUrl(): ? string
+    public function getAuthUrl(): ?string
     {
         return $this->authUrl;
     }
@@ -312,7 +312,7 @@ class SteamAuth implements SteamAuthInterface
      *
      * @return string|null
      */
-    public function getSteamId(): ? string
+    public function getSteamId(): ?string
     {
         return $this->steamId;
     }
