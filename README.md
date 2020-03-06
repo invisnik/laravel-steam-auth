@@ -7,7 +7,7 @@
 This package is a Laravel 5 service provider which provides support for Steam OpenID and is very easy to integrate with any project that requires Steam authentication.
 
 ## Requirements
- * PHP 7.1+
+ * PHP 7.2+
  * Laravel 5.8+
 
 ## Installation
