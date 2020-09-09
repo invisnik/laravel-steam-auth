@@ -1,5 +1,5 @@
 {
-    "name": "alexevladgabriel/laravel-steam-auth",
+    "name": "invisnik/laravel-steam-auth",
     "description": "Laravel Steam Auth",
     "keywords": ["steam", "laravel", "auth"],
     "license": "MIT",
